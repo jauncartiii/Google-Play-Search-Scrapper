@@ -18,7 +18,7 @@ Configuration is inside scrapper.py file.
     Term to be search in Google Play Store
 
     - country_code
-    Country code of of the country in which the search musdt be done.
+    Country code of of the country in which the search must be done.
 
 # Result
 
