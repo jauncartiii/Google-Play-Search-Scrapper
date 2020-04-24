@@ -1,14 +1,18 @@
 import requests
 import json
 
-offline = False
-search_word = "dating"
-country_code = "es"
+config = {
+    "manual_data_scrap": False,
+    "search_word": "dating",
+    "country_code": "es"
+}
 
-if offline:
+
+
+if config["manual_data_scrap"]:
     r = open("manual_data_scrap", "r", encoding="utf8").read()
 else:
-    r = requests.get(f"https://play.google.com/store/search?q={search_word}&c=apps&gl={country_code}").text
+    r = requests.get(f"https://play.google.com/store/search?q={config['search_word']}&c=apps&gl={config['country_code']}").text
 
 r = r.replace(" >", ">")
 item_app_holder = r.split("<div class=\"Vpfmgd\">")
@@ -64,17 +68,10 @@ for item in item_app_holder:
     data_holder_item_holder[author_name]["apps"].append((title_name, title_link, rating))
     apps += 1
 
-print(f"General Data:\n\tOffline: {offline}\n\tAuthors: {authors}\n\tApps: {apps}\n\tAverage Rating: {rating_sum/apps}\n\n\n")
+
+print(f"General Data:\n\tOffline: {config['manual_data_scrap']}\n\tAuthors: {authors}\n\tApps: {apps}\n\tAverage Rating: {rating_sum/apps}\n\n\n")
 for (author, data) in data_holder_item_holder.items():
     print(f"\n{author}")
     for app in data["apps"]:
         print(f"\t{app[2]} {app[0]}")
 
-    
-# for item in item_app_holder:
-#     count_div_start = item.count("<div")
-#     count_div_end = item.count("</div>")
-
-#     print("Start: " + str(count_div_start) + " End: " + str(count_div_end))
-
-#print(r.text)
