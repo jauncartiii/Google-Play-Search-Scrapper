@@ -1,5 +1,4 @@
 import requests
-import json
 
 config = {
     "manual_data_scrap": False,
@@ -41,11 +40,11 @@ for item in item_app_holder:
     temp_data_split = item.split("<div class=\"kCSSQe\">")
 
     temp2_data_split = temp_data_split[1].split("<a ")
-    title_name = temp2_data_split[1].split("title=\"")[1].split("\"")[0].replace("\n", "")
-    title_link = temp2_data_split[1].split("href=\"")[1].split("\"")[0].replace("\n", "")
+    app_name = temp2_data_split[1].split("title=\"")[1].split("\"")[0].replace("\n", "")
+    app_link = "https://play.google.com" + temp2_data_split[1].split("href=\"")[1].split("\"")[0].replace("\n", "")
 
     author_name = temp2_data_split[2].split("<div class=\"KoLSrc\">")[1].split("</div>")[0].replace("\n", "")
-    author_link = temp2_data_split[2].split("href=\"")[1].split("\"")[0].replace("\n", "")
+    author_link = "https://play.google.com" + temp2_data_split[2].split("href=\"")[1].split("\"")[0].replace("\n", "")
 
     try:
         rating = temp_data_split[2].split("Rated ")[1].split(" ")[0]
@@ -65,7 +64,7 @@ for item in item_app_holder:
     if not data_holder_item_holder[author_name].get("apps"):
         data_holder_item_holder[author_name]["apps"] = []
 
-    data_holder_item_holder[author_name]["apps"].append((title_name, title_link, rating))
+    data_holder_item_holder[author_name]["apps"].append((app_name, app_link, rating))
     apps += 1
 
 
