@@ -1,9 +1,10 @@
 import requests
 
 config = {
-    "manual_data_scrap": False,
+    "manual_data_scrap": False, # When False, max result are 50
     "search_word": "dating",
-    "country_code": "es"
+    "country_code": "es",
+    "number_downloads": False # Increase significantly the time of the data gathery
 }
 
 
@@ -36,6 +37,7 @@ data_holder_item_holder = {}
 authors = 0
 apps = 0
 rating_sum = 0
+total_users = 0
 for item in item_app_holder:
     temp_data_split = item.split("<div class=\"kCSSQe\">")
 
@@ -64,13 +66,34 @@ for item in item_app_holder:
     if not data_holder_item_holder[author_name].get("apps"):
         data_holder_item_holder[author_name]["apps"] = []
 
-    data_holder_item_holder[author_name]["apps"].append((app_name, app_link, rating))
+    downloads = "N/A"
+    if config["number_downloads"]:
+        app_data = requests.get(app_link).text
+        
+        try:
+            downloads = app_data.split("<span class=\"htlgb\">")[6].split("</span>")[0]
+            total_users += int(downloads.replace(".", "").replace(",", "").replace("+", ""))
+        except:
+            downloads = "N/A"
+
+        pass
+
+    data_holder_item_holder[author_name]["apps"].append((app_name, app_link, rating, downloads))
     apps += 1
 
 
-print(f"General Data:\n\tOffline: {config['manual_data_scrap']}\n\tAuthors: {authors}\n\tApps: {apps}\n\tAverage Rating: {rating_sum/apps}\n\n\n")
+print(
+    f'''General Data:
+    \tOffline: {config['manual_data_scrap']}
+    \tQuery Term: {config['search_word']}\n
+    \t- Authors: {authors}
+    \t- Apps: {apps}
+    \t- Average Rating: {'{:.4f}'.format(rating_sum/apps)}
+    \t- Total users all results sum: {f'{total_users:,}' if config['number_downloads'] else 'N/A'}\n'''
+)
+
 for (author, data) in data_holder_item_holder.items():
     print(f"\n{author}")
     for app in data["apps"]:
-        print(f"\t{app[2]} {app[0]}")
+        print(f"\t{app[2]} {f'{app[3]} ' if config['number_downloads'] else ''}- {app[0]}")
 
